@@ -7,7 +7,7 @@
 //我们用一个双向循环链表来维持我们的
 
 int CheckLeak::flag=0;//初始化成员变量
-static int sum=0;//用来统计用户总共申请的东西
+static long long int sum=0;//用来统计用户总共申请的东西
 
 struct List
 {
@@ -16,7 +16,7 @@ struct List
    size_t line;//指向行号
    char *file;//指向文件名
    bool isNew;//区分new/new[]
-   size_t size;//记录用户存储的内存
+   size_t size;//记录用户存储的内存,
 }; 
 
 //typedef struct List* List;
@@ -26,7 +26,12 @@ static struct List listhead={&listhead,&listhead,0,NULL,true,0}; //需要一个�
 void* RequestMem(size_t size,const char *file,size_t line,bool isNew)//申请内存
 {
     size_t totalsize=size+sizeof(struct List);//给存储的结点也需要开辟结点
-    struct List* total=(struct List*)malloc(totalsize);//申请空间
+    struct List* total=(struct List*)malloc(totalsize);//申请空间,malloc
+	if(total==NULL)//malloc  
+	{
+	  std::cout<<"内存不够"<<std::endl;
+	  exit(1); 
+	} 
 	//将其插入到链表中去，采取头插
 	total->prev=&listhead;//指向头结点
 	total->next=listhead.next;//指向头结点指向的结点
@@ -35,8 +40,8 @@ void* RequestMem(size_t size,const char *file,size_t line,bool isNew)//申请内
     
 	total->size=size;//保存用户申请的空间
 	total->line=line;//保存行号
-     if(file!=NULL)//给过来的文件信息不等于null 
-	 { 
+    if(file!=NULL)//给过来的文件信息不等于null 
+	{ 
 		total->file=(char*)malloc(strlen(file)+1);//给文件申请空间 
 		strcpy(total->file,file);//将文件信息保存
 	 	//std::cout<<total->file<<std::endl;
@@ -90,7 +95,7 @@ void CheckLeak::check() //检查是否泄漏
    struct List* cur=listhead.next;//指向下一个结点
    std::cout<<"发生内存泄漏:"<<std::endl;
    int i=0;
-   int count=0;
+  long long int count=0;
    while(cur!=NULL&&&listhead!=cur)//遍历双向循环链表
    {
 		   if(cur->isNew==true)//使用new 

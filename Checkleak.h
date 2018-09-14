@@ -5,16 +5,15 @@
 #include<iostream>
 #include<stdlib.h>
 #include<cstring>
-
-
 void* operator new(size_t size,const char *file,size_t line);
 void* operator new[](size_t size,const char *file,size_t line);  
 
 void operator delete(void *ptr); 
 void operator delete[](void *ptr);  		
 		
-#ifndef NOT_USE_NEW
+#ifndef NOT_USE_NEW//如果没有这个宏定义就定义这个宏
 #define new new(__FILE__,__LINE__)//获取泄漏的文件和行
+
 #endif
 
 class CheckLeak
